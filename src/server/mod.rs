@@ -2,9 +2,9 @@ use std::net::{TcpListener, TcpStream};
 use std::io::{Read, Write};
 use std::fs;
 
-pub fn main() {
+pub fn main(address: &String) {
     println!("starting server...");
-    let listener = TcpListener::bind("muad-dib.student.rit.edu:80").unwrap();
+    let listener = TcpListener::bind(address).unwrap();
     for stream in listener.incoming() {
         let stream = stream.unwrap();
         handle_connection(stream);
