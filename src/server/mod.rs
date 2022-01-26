@@ -1,13 +1,21 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::{Read, Write};
 use std::fs;
+use crate::server::threadpool::ThreadPool;
+
+mod threadpool;
 
 pub fn main(address: &String) {
     println!("starting server...");
     let listener = TcpListener::bind(address).unwrap();
+    let threadpool = ThreadPool::new(4);
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
-        handle_connection(stream);
+        match stream {
+            Ok(stream) => threadpool.execute(|| handle_connection(stream)),
+            Err(e) => {
+                println!("An error occurred when connecting to the client! Luckily, they'll probably try to connect again. {}", e);
+            }
+        }
     }
 }
 
@@ -51,7 +59,7 @@ Content-Length: [length in bytes]\r\n
 ```
 */
 fn handle_connection(mut stream: TcpStream) {
-    println!("something connected here");
+    // println!("something connected here");
     let mut buffer = [0; 1024];
     stream.read(&mut buffer).unwrap();
     println!("data: {}", String::from_utf8_lossy(&buffer[..]));
