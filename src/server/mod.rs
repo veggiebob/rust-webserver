@@ -4,6 +4,7 @@ use std::fs;
 use crate::server::threadpool::ThreadPool;
 
 mod threadpool;
+mod cache;
 
 pub fn main(address: &String) {
     println!("starting server...");

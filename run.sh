@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nohup authbind --deep cargo run $1 &
+nohup authbind --deep cargo run "$1" &
