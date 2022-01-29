@@ -6,11 +6,9 @@
     </head>
     <body>
         <a href="parse-demo.html">
-            <img src="terminal-template.png" width=50px height=50px alt="terminal-template">
+            <img src="terminal-template.png" id="terminal-button" alt="terminal-template">
         </a>
-        <a href="hose.html">
-            <img src="gym-hoes.png" id=gym-data>
-        </a>
+        <a href="hose.html"><img src="gym-hoes.png" id=gym-data></a>
         <br>
         <a href="other-page.html">Go to the other page</a>
         <br><br>
@@ -18,12 +16,18 @@
     </body>
     <script src="main.js"></script>
     <style>
+        @import "dark-theme.css";
         #gym-data {
             /* thick border with rounded corners */
             border: 5px solid #ccc;
             border-radius: 5px;
             width: 150px;
             height: 150px;
+        }
+        #terminal-button {
+            width: 150px;
+            height: 150px;
+            border: none
         }
     </style>
 </html>

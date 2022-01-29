@@ -1,10 +1,20 @@
 /* make the background dark */
 body {
     background-color: #333;
-}
-.default {
     /* white */
     color: #ccc;
     /* droid sans mono font */
     font-family: 'Droid Sans Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+}
+
+input {
+    background-color: #ccc;
+    border-radius: 3px;
+    /* slight light shadow */
+    box-shadow: 0px 0px 3px #ccc;
+}
+
+a {
+    color: magenta;
+    font-weight: bold;
 }
