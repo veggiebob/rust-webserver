@@ -1,6 +1,3 @@
-function test() {
-    console.log("hello");
-}
 var sendMessage = function(message) {
     var xmlHttp = new XMLHttpRequest(); //returns a XMLHttpRequest object
     var mimeType = "text/plain";

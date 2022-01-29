@@ -6,8 +6,21 @@
 </head>
 <body>
 <input type="text" id="message-input">
-<button type="button" onclick="sendMessage(document.getElementById('message-input').value)">Submit</button>
+<button type="button" onclick="submit()">Submit</button>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="main.js"></script>
+<script>
+    function submit() {
+        let input = document.getElementById("message-input");
+        sendMessage(input.value);
+        input.value = "";
+    }
+</script>
 </body>
+<style>
+    #message-input {
+        height: 30px;
+        border: 1px solid black;
+    }
+</style>
 </html>

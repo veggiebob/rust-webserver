@@ -40,13 +40,17 @@ impl ThreadPool {
 impl Worker {
     pub fn new(id: usize, receiver: Arc<Mutex<Receiver<Job>>>) -> Worker {
         let join_handle = thread::spawn(move || loop {
-            let job = receiver.lock().unwrap().recv().unwrap();
-            println!("Worker {} processing a job!", id);
-            job();
+            if let Ok(job) = Worker::get_job(&receiver) {
+                println!("Worker {} processing a job!", id);
+                job();
+            } // skip over bad unwraps
         });
         Worker {
             id,
             thread: join_handle
         }
+    }
+    fn get_job(receiver: &Arc<Mutex<Receiver<Job>>>) -> Result<Job, ()> {
+        receiver.lock().map_err(|_| ())?.recv().map_err(|_| ())
     }
 }

@@ -39,7 +39,7 @@ fn get_resource(url: String) -> Result<(SendMethod, String), String> {
             Ok((SendMethod::PlainText, format!("scripts/{}", last_arg)))
         } else if vec![".html", ".css"].iter().any(|s| last_arg.ends_with(s)) {
             Ok((SendMethod::PlainText, format!("layout/{}", last_arg)))
-        } else if vec![".jpg", ".ico"].iter().any(|s| last_arg.ends_with(s)) {
+        } else if vec![".jpg", ".ico", ".png"].iter().any(|s| last_arg.ends_with(s)) {
             Ok((SendMethod::Binary, format!("layout/{}", last_arg)))
         } else {
             Err(format!("Don't know how to look for resource at {}", url))

@@ -23,18 +23,18 @@ cache/
     data/
         <hash1>/
             0/
-                metadata
+                key
                 data
             1/
-                metadata
+                key
                 data
             ...
         <hash2>/
             0/
-                metadata
+                key
                 data
             1/
-                metadata
+                key
                 data
             ...
         ...
@@ -207,7 +207,7 @@ impl Cache<'_> {
         for fold_n in chain {
             match OpenOptions::new().read(true).open(
                 // todo: hardcoded string?
-                format!("{}/{}/{}/meta", self.folder, &hash_dir, fold_n)) {
+                format!("{}/{}/{}/key", self.folder, &hash_dir, fold_n)) {
                 Ok(mut f) => {
                     let mut content = String::new();
                     f.read_to_string(&mut content);
@@ -272,7 +272,7 @@ impl Cache<'_> {
             .create(true)
             .open(
                 // todo: hardcoded string?
-                format!("{}/{}/{}/meta", self.folder, &hash_name, n)
+                format!("{}/{}/{}/key", self.folder, &hash_name, n)
             )
             .map(|mut f| {
                 write!(f, "{}", meta);

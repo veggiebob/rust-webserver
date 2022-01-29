@@ -1,0 +1,10 @@
+/* make the background dark */
+body {
+    background-color: #333;
+}
+.default {
+    /* white */
+    color: #ccc;
+    /* droid sans mono font */
+    font-family: 'Droid Sans Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+}
