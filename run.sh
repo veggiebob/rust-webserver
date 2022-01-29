@@ -1,3 +1,3 @@
 #!/bin/bash
-
-nohup authbind --deep cargo run "$1" &
+cargo build --release
+authbind --deep ./target/release/veggiebob-website "$1"
