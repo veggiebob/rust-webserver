@@ -46,18 +46,24 @@ impl Website {
         let path: Vec<&str> = url.split("/").into_iter().filter(|s| !s.is_empty()).collect();
         // println!("{:?}", path);
         if path.len() > 0 {
-            let last_arg = path.last().unwrap();
-            if last_arg.ends_with(".js") {
-                Ok((SendMethod::PlainText, format!("{}/scripts/{}", self.loc, last_arg)))
-            } else if vec![".html", ".css"].iter().any(|s| last_arg.ends_with(s)) {
-                Ok((SendMethod::PlainText, format!("{}/layout/{}", self.loc, last_arg)))
-            } else if vec![".jpg", ".ico", ".png"].iter().any(|s| last_arg.ends_with(s)) {
-                Ok((SendMethod::Binary, format!("{}/layout/{}", self.loc, last_arg)))
+            let mut last_file = path.last().unwrap();
+            let args: Vec<_> = last_file.split("?").collect();
+            if args.len() > 1 {
+                last_file = args.get(0).unwrap();
+                let args: Vec<_> = args.last().unwrap().split("&").collect();
+                // do something with args
+            }
+            if last_file.ends_with(".js") {
+                Ok((SendMethod::PlainText, format!("{}/scripts/{}", self.loc, last_file)))
+            } else if vec![".html", ".css"].iter().any(|s| last_file.ends_with(s)) {
+                Ok((SendMethod::PlainText, format!("{}/layout/{}", self.loc, last_file)))
+            } else if vec![".jpg", ".ico", ".png"].iter().any(|s| last_file.ends_with(s)) {
+                Ok((SendMethod::Binary, format!("{}/layout/{}", self.loc, last_file)))
             } else {
                 Err(format!("Don't know how to look for resource at {}", url))
             }
         } else {
-            Ok((SendMethod::PlainText, String::from("layout/index.html")))
+            Ok((SendMethod::PlainText, format!("{}/layout/index.html", self.loc)))
         }
     }
     /**
@@ -72,7 +78,6 @@ impl Website {
     ```
      */
     fn handle_connection(&self, mut stream: TcpStream) {
-        // println!("something connected here");
         let mut buffer = [0; 1024];
         stream.read(&mut buffer).unwrap();
         println!("data: {}", String::from_utf8_lossy(&buffer[..]));
@@ -86,13 +91,17 @@ impl Website {
                     let message_type = args[0];
                     let url = args[1];
                     let http_version = args[2];
-                    match message_type {
-                        "GET" => self.handle_get(url),
-                        "PUT" => {
-                            create_bad_request_error("no data to put idiot".to_string())
-                        },
-                        _ => {
-                            create_bad_request_error("what are you even trying to do".to_string())
+                    if http_version == "HTTP/6.9" {
+                        Response::PlainText(format!("HTTP/6.9 420 nice 👌\r\n\r\n"))
+                    } else {
+                        match message_type {
+                            "GET" => self.handle_get(url),
+                            "PUT" => {
+                                create_bad_request_error("server doesn't expect a put request".to_string())
+                            },
+                            _ => {
+                                create_bad_request_error("what are you even trying to do".to_string())
+                            }
                         }
                     }
                 }
@@ -114,18 +123,18 @@ impl Website {
         match self.get_resource(url.to_string()) {
             Ok((send_method, resource_path)) => match send_method {
                 SendMethod::PlainText =>
-                    match fs::read_to_string(resource_path) {
+                    match fs::read_to_string(resource_path.clone()) {
                         Ok(resource_file) => Response::PlainText(format!(
                             "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
                             resource_file.len(),
                             resource_file
                         )),
                         Err(err) => create_bad_request_error(
-                            err.to_string()
+                            format!("Cannot open file: {}", err.to_string())
                         )
                     },
                 SendMethod::Binary =>
-                    match fs::read(resource_path) {
+                    match fs::read(resource_path.clone()) {
                         Ok(binary_data) => {
                             let header = format!(
                                 "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n",
@@ -139,7 +148,9 @@ impl Website {
                             }
                             Response::Binary(data)
                         },
-                        Err(err) => create_bad_request_error(err.to_string())
+                        Err(err) => create_bad_request_error(
+                            format!("Cannot open file: {}", err.to_string())
+                        )
                     }
             },
             Err(error_message) => create_bad_request_error(
