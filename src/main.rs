@@ -1,17 +1,15 @@
-pub mod client;
 pub mod server;
 use std::env;
+use std::sync::Arc;
+use crate::server::Website;
+
 fn main() {
     let mut args: Vec<_> = env::args().collect();
-    assert!(args.len() > 1, "1 command line arg needed: 'client' or 'server'");
-    let arg = args.remove(1);
-    match arg.as_str() {
-        "client" => {
-            client::main();
-        },
-        "server" => {
-            server::main();
-        },
-        _ => panic!("Command line argument needs to be either 'client' or 'server'")
-    }
+    if args.len() != 3 {
+        panic!("2 command line args needed: <website files location> <addr:port>")
+    };
+    let addr = args.remove(2);
+    let site = args.remove(1);
+    let site = Arc::new(Website::new(site));
+    server::main(Arc::clone(&site), &addr)
 }
