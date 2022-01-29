@@ -3,3 +3,6 @@
 /cache
 Cargo.lock
 nohup.out
+
+# optional folder to put website in if it's not on the disk somewhere
+website/
